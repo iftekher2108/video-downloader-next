@@ -5,9 +5,8 @@ export default function VideoDownloader() {
 
   const handleDownload = async() => {
     if (!url) return;
-    const api_url = process.env.API_URL || '';
 
-    const res = await fetch(`${api_url}/api/download?url=${url}`);
+    const res = await fetch(`http://localhost:3001/api/download?url=${url}`);
     if (!res.ok) {
       alert("Failed to download video. Please check the URL and try again.");
       return;
