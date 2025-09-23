@@ -14,7 +14,7 @@ export default function VideoDownloader() {
       setVideoInfo(null);
       setLoading(true);
       setError(null);
-      const info = await fetch(`http://localhost:3001/api/info?url=${url}&type=${format}`);
+      const info = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/info?url=${url}&type=${format}`);
       if (!info.ok) {
         setLoading(false);
         setError("Failed to info video. Please check the URL and try again.");
@@ -40,18 +40,14 @@ export default function VideoDownloader() {
       setError("Invalid URL.");
       return;
     }
-    const response = `http://localhost:3001/api/download?url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoInfo.title)}&itag=${format.itag}&container=${format.container}`;
-    // const blob = await response.blob();
-    // if (blob.size === 0) {
-    //   throw new Error("Downloaded file is empty");
-    // }
-    // const url = window.URL.createObjectURL(blob);
+    const response = `${process.env.NEXT_PUBLIC_API_URL}/api/download?url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoInfo.title)}&itag=${format.itag}&container=${format.container}`;
     const a = document.createElement("a");
     a.href = response;
-    // .replace(/[^a-z0-9]/gi, "_").toLowerCase()
     const safeTitle = format.title;
-    a.download = safeTitle + "." + (format.includes('audio/') === "audio" ? "mp3" : "mp4");
+    const extension = (typeof format === "string" && format.startsWith("audio/")) ? "mp3" : "mp4";
+    a.download = safeTitle + "." + extension;
     document.body.appendChild(a);
+    // a.target = "_blank";
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
@@ -115,7 +111,7 @@ export default function VideoDownloader() {
                     <p>
                       {format.quality}{" "}
                       {format.hasVideo && !format.hasAudio
-                        ? "(Video Only)"
+                        ? "(Video Only) (Processing Audio)"
                         : ""}
                       {format.hasAudio && !format.hasVideo
                         ? "(Audio Only)"
