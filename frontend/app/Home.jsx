@@ -31,28 +31,26 @@ export default function VideoDownloader() {
     }
   };
 
-  const singleDownload = async (videoInfo, format) => {
-    if (!format || !format.url) {
+  const singleDownload = (videoInfo, format, videoUrl) => {
+    if (!format) {
       setError("Invalid format selected for download.");
       return;
     }
-    const response = await fetch(
-      `http://localhost:3001/api/download?url=${format.url}&title=${videoInfo.title}&container=${format.container}`
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
+    if(!videoUrl) {
+      setError("Invalid URL.");
+      return;
     }
-    const blob = await response.blob();
-    if (blob.size === 0) {
-      throw new Error("Downloaded file is empty");
-    }
-    const url = window.URL.createObjectURL(blob);
+    const response = `http://localhost:3001/api/download?url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoInfo.title)}&itag=${format.itag}&container=${format.container}`;
+    // const blob = await response.blob();
+    // if (blob.size === 0) {
+    //   throw new Error("Downloaded file is empty");
+    // }
+    // const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    const safeTitle = format.title.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-    a.download =
-      safeTitle + "." + format.container ||
-      "downloaded-file" + "." + (format.container || "mp4");
+    a.href = response;
+    // .replace(/[^a-z0-9]/gi, "_").toLowerCase()
+    const safeTitle = format.title;
+    a.download = safeTitle + "." + (format.includes('audio/') === "audio" ? "mp3" : "mp4");
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -155,7 +153,7 @@ export default function VideoDownloader() {
                   <p>Format: {format.mimeType}</p>
                   <p>Container: {format.container}</p>
                   <button
-                    onClick={() => singleDownload(videoInfo, format)}
+                    onClick={() => singleDownload(videoInfo, format, url)}
                     className="btn btn-primary my-2"
                   >
                     Download
