@@ -9,8 +9,8 @@ async function info(req, res) {
 
 
 const download = async (req, res) => {
-  const { url, title, itag, container } = req.query;
-  downloadService.downloadService(url, title, itag, container, res);
+  const { url, title, itag, type } = req.query;
+  downloadService.downloadService(url, title, itag, type, res);
 };
 
 module.exports = { info, download };

@@ -40,7 +40,7 @@ export default function VideoDownloader() {
       setError("Invalid URL.");
       return;
     }
-    const response = `${process.env.NEXT_PUBLIC_API_URL}/api/download?url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoInfo.title)}&itag=${format.itag}&container=${format.container}`;
+    const response = `${process.env.NEXT_PUBLIC_API_URL}/api/download?url=${encodeURIComponent(videoUrl)}&title=${encodeURIComponent(videoInfo.title)}&itag=${format.itag}&type=${format.mimeType}`;
     const a = document.createElement("a");
     a.href = response;
     const safeTitle = format.title;
@@ -104,26 +104,12 @@ export default function VideoDownloader() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
               {videoInfo.formats.map((format) => (
                 <div
-                  className="card col-span-1 p-4 border border-primary"
+                  className="card col-span-1 border border-primary p-4"
                   key={format.itag}
                 >
-                  <div className="flex justify-between gap-2 mb-2">
-                    <p>
-                      {format.quality}{" "}
-                      {format.hasVideo && !format.hasAudio
-                        ? "(Video Only) (Processing Audio)"
-                        : ""}
-                      {format.hasAudio && !format.hasVideo
-                        ? "(Audio Only)"
-                        : ""}{" "}
-                      {format.hasAudio && format.hasVideo
-                        ? "(Audio & Video)"
-                        : ""}
-                    </p>
-                  </div>
                   <Image
-                    src={format.thumbnail}
-                    alt={format.resolution}
+                    src={videoInfo.thumbnail}
+                    alt={videoInfo.title}
                     className="rounded"
                     width={500}
                     height={200}
@@ -134,23 +120,28 @@ export default function VideoDownloader() {
                   </h3>
 
                   <div className="flex justify-between">
-                    <p>Size: {format.size}</p>
-                    <p className="col-span-3">
-                      Resolution: {format.resolution}
-                    </p>
+                    {/* <p>Size: {format.size}</p> */}
+                    <p>{format.quality}</p>
+                    {format.mimeType.startsWith('video/') &&
+                    <p>
+                      Resolution: {format.qualityLabel}
+                    </p> }
+                    
                   </div>
 
                   <div className="flex justify-between">
-                    <p>Bitrate: {format.bitrate}</p>
+                    {/* <p>Bitrate: {format.bitrate}</p> */}
+                    {format.mimeType.startsWith("video/") && 
                     <p>FPS: {format.fps}</p>
+                    }
+                    
                   </div>
 
-                  <p>Itag: {format.itag}</p>
+                  {/* <p>Itag: {format.itag}</p> */}
                   <p>Format: {format.mimeType}</p>
-                  <p>Container: {format.container}</p>
                   <button
                     onClick={() => singleDownload(videoInfo, format, url)}
-                    className="btn btn-primary my-2"
+                    className="btn btn-primary mt-2"
                   >
                     Download
                   </button>

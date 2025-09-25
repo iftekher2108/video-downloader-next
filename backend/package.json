@@ -12,10 +12,10 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@distube/ytdl-core": "^4.16.12",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "ffmpeg-static": "^5.2.0",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "play-dl": "^1.9.7"
   }
 }
